@@ -19,7 +19,7 @@ class RepoEmbedder:
         self.github_url = github_url
         self.repo_name = self.get_repo_name()
         self.repo_path = f"./repo/{self.repo_name}"
-        self.embeddings_path = f"./embeddings/{self.repo_name}"
+        self.index_path = f"./store/{self.repo_name}"
         self.token = github_token
 
     def get_repo_name(self) -> str:
@@ -63,4 +63,4 @@ class RepoEmbedder:
         doc_chunks = self.recursively_parse_repo_files()
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         vector_store = FAISS.from_documents(doc_chunks, embedding=embeddings)
-        vector_store.save_local(self.embeddings_path)
+        vector_store.save_local(self.index_path)

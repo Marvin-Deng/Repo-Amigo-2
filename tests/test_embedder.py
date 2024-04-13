@@ -10,6 +10,14 @@ class TestRepoEmbedder(unittest.TestCase):
         github_url = "https://github.com/Marvin-Deng/Online-Store"
         self.embedder = RepoEmbedder(github_url)
 
+    def tearDown(self):
+        if hasattr(self, "embedder"):
+            index_path = self.embedder.index_path
+
+            if os.path.exists(index_path):
+                shutil.rmtree("./store")
+                print(f"Directory '{index_path}' successfully removed.")
+
     def test_get_repo_name(self):
         self.embedder.get_repo_name()
 
@@ -20,8 +28,8 @@ class TestRepoEmbedder(unittest.TestCase):
 
     def test_generate_vector_store(self):
         self.embedder.generate_vector_store()
-        embeddings_path = self.embedder.embeddings_path
-        self.assertTrue(os.path.exists(embeddings_path))
+        index_path = self.embedder.index_path
+        self.assertTrue(os.path.exists(index_path))
 
 
 if __name__ == "__main__":
