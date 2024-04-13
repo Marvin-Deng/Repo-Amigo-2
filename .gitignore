@@ -4,4 +4,4 @@ venv/
 
 # Repo
 repo/
-embeddings/
+store/
