@@ -19,14 +19,13 @@ class RepoEmbedder:
         self.github_url = github_url
         self.repo_name = self.get_repo_name()
         self.repo_path = f"./repo/{self.repo_name}"
+        self.embeddings_path = f"./embeddings/{self.repo_name}"
         self.token = github_token
-
-        self.clone_repo()
 
     def get_repo_name(self) -> str:
         parsed_url = urlparse(self.github_url)
         path_components = parsed_url.path.strip("/").split("/")
-        return path_components[-1] if path_components else None
+        return path_components[1] if path_components else None
 
     def clone_repo(self):
         if os.path.exists(self.repo_path):
@@ -47,11 +46,13 @@ class RepoEmbedder:
         for curr, _, files in os.walk(self.repo_path):
             for file_name in files:
                 file_path = os.path.join(curr, file_name)
-                try:  
+                try:
                     loader = TextLoader(file_path, encoding="utf-8")
-                    doc_chunks.extend(loader.load_and_split(
-                        text_splitter=RecursiveCharacterTextSplitter(chunk_size=250)
-                    ))
+                    doc_chunks.extend(
+                        loader.load_and_split(
+                            text_splitter=RecursiveCharacterTextSplitter(chunk_size=250)
+                        )
+                    )
                 except Exception as e:
                     pass
                     # print(f"Failed to load file: {file_name} with error {e}")
@@ -62,4 +63,4 @@ class RepoEmbedder:
         doc_chunks = self.recursively_parse_repo_files()
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         vector_store = FAISS.from_documents(doc_chunks, embedding=embeddings)
-        vector_store.save_local(f"./embeddings/{self.repo_name}")
+        vector_store.save_local(self.embeddings_path)

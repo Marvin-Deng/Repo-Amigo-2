@@ -2,7 +2,7 @@
 
 ## Running
 ```shell
-python3 main.py
+streamlit run app.py
 ```
 
 ## Testing
