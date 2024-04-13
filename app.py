@@ -10,9 +10,14 @@ def main():
     github_url = st.text_input("Enter a github url")
 
     if github_url:
-        embedder = RepoEmbedder(github_url)
-        embedder.clone_repo()
-        embedder.generate_vector_store()
+        with st.spinner("Loading..."):
+            embedder = RepoEmbedder(github_url)
+            embedder.clone_repo()
+            embedder.generate_vector_store()
+
+        st.success(f"Embeddings created for {embedder.repo_name}!")
+
+        question = st.text_input("Ask a question about this repo!")
 
 
 if __name__ == "__main__":
