@@ -1,18 +1,16 @@
+import os
 import unittest
 import shutil
 
-
-from file_utils import (
-    clone_repo,
-    get_text_chunks,
-)
+from embedder import RepoEmbedder
 
 
 class TestCloneRepo(unittest.TestCase):
     def test_clone_repo(self):
         github_url = "https://github.com/Marvin-Deng/Online-Store"
+        embedder = RepoEmbedder(github_url)
         repo_path = "./repo/Online-Store"
-        self.assertTrue(clone_repo(github_url, repo_path))
+        self.assertTrue(os.path.exists(repo_path))
         shutil.rmtree("./repo")
 
 
