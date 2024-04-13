@@ -1,9 +1,17 @@
 import os
 import shutil
 from git import Repo
+from dotenv import load_dotenv
 from urllib.parse import urlparse
+import google.generativeai as genai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
+from langchain_community.vectorstores import FAISS
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
+load_dotenv()
+
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 class RepoEmbedder:
@@ -14,7 +22,6 @@ class RepoEmbedder:
         self.token = github_token
 
         self.clone_repo()
-        self.recursively_parse_repo_files()
 
     def get_repo_name(self) -> str:
         parsed_url = urlparse(self.github_url)
@@ -36,18 +43,23 @@ class RepoEmbedder:
             print(f"Failed to clone repository: {e}")
 
     def recursively_parse_repo_files(self) -> list:
-        document_chunks = []
+        doc_chunks = []
         for curr, _, files in os.walk(self.repo_path):
             for file_name in files:
                 file_path = os.path.join(curr, file_name)
-                try:
+                try:  
                     loader = TextLoader(file_path, encoding="utf-8")
-                    chunks = loader.load_and_split(
+                    doc_chunks.extend(loader.load_and_split(
                         text_splitter=RecursiveCharacterTextSplitter(chunk_size=250)
-                    )
-                    document_chunks.extend(chunks)
+                    ))
                 except Exception as e:
                     pass
                     # print(f"Failed to load file: {file_name} with error {e}")
         shutil.rmtree("./repo")
-        return document_chunks
+        return doc_chunks
+
+    def generate_vector_store(self):
+        doc_chunks = self.recursively_parse_repo_files()
+        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        vector_store = FAISS.from_documents(doc_chunks, embedding=embeddings)
+        vector_store.save_local(f"./embeddings/{self.repo_name}")
