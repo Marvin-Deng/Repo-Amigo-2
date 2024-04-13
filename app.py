@@ -15,7 +15,7 @@ def main():
             embedder.clone_repo()
             embedder.generate_vector_store()
 
-        st.success(f"Embeddings created for {embedder.repo_name}!")
+        st.success(f"{embedder.repo_name} has been loaded!")
 
         question = st.text_input("Ask a question about this repo!")
 
