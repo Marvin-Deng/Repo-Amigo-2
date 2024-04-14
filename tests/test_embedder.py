@@ -3,7 +3,7 @@ import unittest
 import shutil
 from urllib.parse import urlparse
 
-from embedder import RepoEmbedder
+from repo_chain.embedder import RepoEmbedder
 
 
 class TestRepoEmbedder(unittest.TestCase):

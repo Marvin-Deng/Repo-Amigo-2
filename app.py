@@ -1,7 +1,7 @@
 import streamlit as st
 from urllib.parse import urlparse
-from embedder import RepoEmbedder
-from chain import RepoChain
+from repo_chain.embedder import RepoEmbedder
+from repo_chain.chain import RepoChain
 
 
 def main():

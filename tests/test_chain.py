@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from chain import RepoChain
+from repo_chain.chain import RepoChain
 
 
 class TestChain(unittest.TestCase):

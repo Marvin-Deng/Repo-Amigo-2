@@ -7,7 +7,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
-from constants import GOOGLE_API_KEY
+from repo_chain.constants import GOOGLE_API_KEY
 
 genai.configure(api_key=GOOGLE_API_KEY)
 

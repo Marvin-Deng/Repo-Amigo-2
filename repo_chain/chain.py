@@ -7,7 +7,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 
-from constants import GOOGLE_API_KEY
+from repo_chain.constants import GOOGLE_API_KEY
 
 genai.configure(api_key=GOOGLE_API_KEY)
 
