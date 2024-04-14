@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 import streamlit as st
 import google.generativeai as genai
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -8,10 +7,9 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 
+from constants import GOOGLE_API_KEY
 
-load_dotenv()
-
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+genai.configure(api_key=GOOGLE_API_KEY)
 
 
 class RepoChain:
@@ -23,7 +21,7 @@ class RepoChain:
     def load_faiss_index(self):
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         if not os.path.exists(self.index_path):
-            return None 
+            return None
         faiss_index = FAISS.load_local(
             self.index_path, embeddings, allow_dangerous_deserialization=True
         )
