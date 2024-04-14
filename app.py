@@ -1,20 +1,27 @@
+import os
+import shutil
 import streamlit as st
 from urllib.parse import urlparse
 from repo_chain.embedder import RepoEmbedder
 from repo_chain.chain import RepoChain
 
-from state_store import CURR_GITHUB_REPO
-
 
 def main():
-    global CURR_GITHUB_REPO
-
     st.set_page_config("Repo Amigo 2")
     st.header("Repo Amigo 2")
 
     github_url = st.text_input("Enter a public github url")
-    if github_url and CURR_GITHUB_REPO != github_url:
+    reset_button = st.button("Reset")
+    
+    if github_url:
         repo_name = urlparse(github_url).path.split("/")[1]
+
+    if reset_button:
+        github_url = ""
+        index_path = f"./store/{repo_name}"
+        print(index_path)
+        if os.path.exists(index_path):
+            shutil.rmtree(index_path)
 
     if github_url:
         with st.spinner("Loading..."):
@@ -26,7 +33,6 @@ def main():
             repo_chain.generate_conversational_chain()
 
             st.success(f"{embedder.repo_name} has been loaded!")
-            CURR_GITHUB_REPO = github_url
 
         question = st.text_input("Ask a question about this repo!", key="question")
         if question:
