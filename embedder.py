@@ -2,7 +2,6 @@ import os
 import shutil
 from git import Repo
 from dotenv import load_dotenv
-from urllib.parse import urlparse
 import google.generativeai as genai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
@@ -15,18 +14,13 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 class RepoEmbedder:
-    def __init__(self, github_url: str, github_token=None):
+    def __init__(self, github_url: str, repo_name: str, github_token=None):
         self.github_url = github_url
-        self.repo_name = self.get_repo_name()
+        self.repo_name = repo_name
         self.repo_path = f"./repo/{self.repo_name}"
         self.index_path = f"./store/{self.repo_name}"
         self.token = github_token
-
-    def get_repo_name(self) -> str:
-        parsed_url = urlparse(self.github_url)
-        path_components = parsed_url.path.strip("/").split("/")
-        return path_components[1] if path_components else None
-
+        
     def clone_repo(self):
         if os.path.exists(self.repo_path):
             return
