@@ -21,7 +21,7 @@ class RepoEmbedder:
         self.token = github_token
 
     def clone_repo(self):
-        if os.path.exists(self.repo_path):
+        if os.path.exists(self.repo_path) or os.path.exists(self.index_path):
             return
         try:
             if self.token:
@@ -53,6 +53,8 @@ class RepoEmbedder:
         return doc_chunks
 
     def generate_vector_store(self):
+        if os.path.exists(self.index_path):
+            return
         doc_chunks = self.recursively_parse_repo_files()
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         vector_store = FAISS.from_documents(doc_chunks, embedding=embeddings)
