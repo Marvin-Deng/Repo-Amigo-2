@@ -21,7 +21,7 @@ class RepoEmbedder:
         self.token = github_token
 
     def clone_repo(self):
-        if os.path.exists(self.repo_path):
+        if os.path.exists(self.repo_path) or os.path.exists(self.index_path):
             return
         try:
             if self.token:

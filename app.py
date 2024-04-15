@@ -21,22 +21,20 @@ def main():
     github_url = st.text_input("Enter a public github url")
     reset_button = st.button("Reset")
 
-    if github_url and github_url != get_state(State.CURR_REPO_URL):
-        url_components = urlparse(github_url).path.split("/")
-        repo_owner = url_components[1]
-        repo_name = url_components[2]
-        set_state(State.CURR_REPO_URL, github_url)
-        set_state(State.CURR_REPO_NAME, repo_name)
-        set_state(State.CURR_REPO_OWNER, repo_owner)
-
     if reset_button:
-        github_url = ""
-        index_path = f"./store/{get_state(State.CURR_REPO_NAME)}"
+        index_path = f"./store/{get_state(State.CURR_REPO_OWNER)}-{get_state(State.CURR_REPO_NAME)}"
         if os.path.exists(index_path):
+            init_states()
             shutil.rmtree(index_path)
 
     if github_url:
-        with st.spinner("Loading..."):
+        question = ""
+        url_components = urlparse(github_url).path.split("/")
+        set_state(State.CURR_REPO_URL, github_url)
+        set_state(State.CURR_REPO_NAME, url_components[2])
+        set_state(State.CURR_REPO_OWNER, url_components[1])
+
+        with st.spinner("Loading"):
             embedder = RepoEmbedder(
                 github_url=get_state(State.CURR_REPO_URL),
                 repo_owner=get_state(State.CURR_REPO_OWNER),

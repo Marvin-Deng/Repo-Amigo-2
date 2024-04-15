@@ -20,8 +20,6 @@ STATE_DEFAULTS = {
 
 
 def init_states():
-    if st.session_state:
-        return
     for key, default in STATE_DEFAULTS.items():
         set_state(key, copy.deepcopy(default))
 
