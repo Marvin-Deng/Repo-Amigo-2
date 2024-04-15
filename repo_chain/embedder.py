@@ -7,21 +7,21 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
-from repo_chain.constants import GOOGLE_API_KEY
+from state_store import GOOGLE_API_KEY
 
 genai.configure(api_key=GOOGLE_API_KEY)
 
 
 class RepoEmbedder:
-    def __init__(self, github_url: str, repo_name: str, github_token=None):
+    def __init__(self, github_url: str, repo_owner: str, repo_name: str, github_token=None):
         self.github_url = github_url
         self.repo_name = repo_name
-        self.repo_path = f"./repo/{self.repo_name}"
-        self.index_path = f"./store/{self.repo_name}"
+        self.repo_path = f"./repo/{repo_owner}-{repo_name}"
+        self.index_path = f"./store/{repo_owner}-{repo_name}"
         self.token = github_token
 
     def clone_repo(self):
-        if os.path.exists(self.repo_path) or os.path.exists(self.index_path):
+        if os.path.exists(self.repo_path):
             return
         try:
             if self.token:
