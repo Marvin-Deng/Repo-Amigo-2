@@ -9,8 +9,12 @@ from repo_chain.embedder import RepoEmbedder
 class TestRepoEmbedder(unittest.TestCase):
     def setUp(self):
         github_url = "https://github.com/Marvin-Deng/Online-Store"
-        repo_name = urlparse(github_url).path.split("/")[1]
-        self.embedder = RepoEmbedder(github_url, repo_name)
+        url_components = urlparse(github_url).path.split("/")
+        self.embedder = RepoEmbedder(
+            github_url=github_url,
+            repo_owner=url_components[1],
+            repo_name=url_components[2],
+        )
 
     def tearDown(self):
         if hasattr(self, "embedder"):
