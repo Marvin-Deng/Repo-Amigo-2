@@ -51,7 +51,14 @@ def main():
         question = st.text_input("Ask a question about this repo!", key="question")
         if question:
             with st.spinner("Answering question..."):
-                st.write(repo_chain.get_response(question))
+                st.write(
+                    repo_chain.get_response(
+                        repo_name=get_state(State.CURR_REPO_NAME),
+                        repo_owner=get_state(State.CURR_REPO_OWNER),
+                        github_url=get_state(State.CURR_REPO_URL),
+                        user_question=question,
+                    )
+                )
 
 
 if __name__ == "__main__":
