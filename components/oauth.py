@@ -11,7 +11,6 @@ from constants import (
 
 
 def oauth_button():
-    print("In oauth")
     if "token" not in st.session_state:
         oauth2 = OAuth2Component(
             client_id=CLIENT_ID,
@@ -25,14 +24,15 @@ def oauth_button():
         res = oauth2.authorize_button(
             name="Login with GitHub",
             redirect_uri=REDIRECT_URI,
+            icon="https://icons.iconarchive.com/icons/simpleicons-team/simple/72/github-icon.png",
             scope="",
         )
-        print(res)
+
         if res and "token" in res and "access_token" in res["token"]:
             st.session_state["token"] = res["token"]["access_token"]
             st.rerun()
     else:
         st.write("You are logged in!")
-        # access_token = get_state(State.ACCESS_TOKEN)
-        # print(f"Access: {access_token}")
-        
+        if st.button("Logout"):
+            del st.session_state["token"]
+            st.rerun()
