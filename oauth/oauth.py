@@ -1,3 +1,4 @@
+import requests
 import streamlit as st
 from streamlit_oauth import OAuth2Component
 
@@ -7,6 +8,8 @@ from constants import (
     GITHUB_AUTHORIZATION_URL,
     GITHUB_TOKEN_URL,
     REDIRECT_URI,
+    GITHUB_INSTALLATION_URL,
+    JWT_TOKEN,
 )
 
 
@@ -36,3 +39,40 @@ def oauth_button():
         if st.button("Logout"):
             del st.session_state["token"]
             st.rerun()
+
+
+def get_installation_id(username):
+    url = f"https://api.github.com/users/{username}/installation"
+    headers = {
+        "Authorization": f"Bearer {JWT_TOKEN}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to retrieve installation ID: {response.status_code}")
+        return None
+
+
+def get_user_repo_list(token):
+
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    response = requests.get(GITHUB_INSTALLATION_URL, headers=headers)
+
+    if response.status_code == 200:
+        repositories = response.json()
+        for repo in repositories:
+            st.write(repo["name"])
+    else:
+        print("Failed to retrieve repositories")
+        print("Status Code:", response.status_code)
+        print("Response:", response.text)
+
+print(get_installation_id("Marvin-Deng"))

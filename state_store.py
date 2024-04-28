@@ -4,28 +4,22 @@ import copy
 import streamlit as st
 
 
-
 class State(Enum):
     CURR_REPO_URL = "repo_url"
     CURR_REPO_NAME = "repo_name"
     CURR_REPO_OWNER = "repo_owner"
-    ACCESS_TOKEN = "access_token"
 
 
 STATE_DEFAULTS = {
     State.CURR_REPO_URL: "",
     State.CURR_REPO_NAME: "",
     State.CURR_REPO_OWNER: "",
-    State.ACCESS_TOKEN: 0,
 }
 
 
 def init_states():
     for key, default in STATE_DEFAULTS.items():
         set_state(key, copy.deepcopy(default))
-
-def is_default_init(key):
-    return st.session_state[key] == STATE_DEFAULTS[key]
 
 
 def set_state(key, value):

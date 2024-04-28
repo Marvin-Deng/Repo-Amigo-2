@@ -1,5 +1,7 @@
 import os
+import re
 import shutil
+import streamlit as st
 from git import Repo
 import google.generativeai as genai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -26,14 +28,15 @@ class RepoEmbedder:
             return
         try:
             if self.token:
-                formatted_url = (
-                    f"https://{self.token}@{self.github_url.split('https://')[1]}"
-                )
+                parts = re.split(r"(github\.com)", self.github_url)
+                formatted_url = f"{parts[0]}{self.token}@{parts[1]}{parts[2]}.git"
+
+                print(f"formatted_url: {formatted_url}")
             else:
                 formatted_url = self.github_url
             Repo.clone_from(formatted_url, self.repo_path)
-        except Exception as e:
-            print(f"Failed to clone repository: {e}")
+        except Exception:
+            st.write("Error cloning repo")
 
     def recursively_parse_repo_files(self) -> list:
         doc_chunks = []
@@ -47,7 +50,7 @@ class RepoEmbedder:
                             text_splitter=RecursiveCharacterTextSplitter(chunk_size=250)
                         )
                     )
-                except Exception as e:
+                except Exception:
                     pass
                     # print(f"Failed to load file: {file_name} with error {e}")
         shutil.rmtree("./repo")
