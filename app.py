@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from repo_chain.embedder import RepoEmbedder
 from repo_chain.chain import RepoChain
 
-from oauth.oauth import oauth_button, get_user_repo_list
+from auth.oauth import oauth_button, get_user_repos
 from state_store import (
     State,
     init_states,
@@ -21,10 +21,10 @@ def main():
     st.header("Repo Amigo 2")
 
     oauth_button()
-    if 'token' in st.session_state and st.session_state['token']:
-        token = st.session_state['token']
+    if "token" in st.session_state and st.session_state["token"]:
+        token = st.session_state["token"]
         st.write(token)
-        get_user_repo_list(token)
+        st.write(get_user_repos("Marvin-Deng"))
 
     github_url = st.text_input(
         "Enter a public github url or a private repo if logged in"
@@ -45,7 +45,6 @@ def main():
         set_state(State.CURR_REPO_OWNER, url_components[1])
 
         with st.spinner("Loading"):
-            
 
             embedder = RepoEmbedder(
                 github_url=get_state(State.CURR_REPO_URL),

@@ -8,7 +8,7 @@ from repo_chain.embedder import RepoEmbedder
 
 class TestRepoEmbedder(unittest.TestCase):
     def setUp(self):
-        github_url = "https://github.com/Marvin-Deng/Online-Store"
+        github_url = "https://github.com/Marvin-Deng/Sentiment-News"
         url_components = urlparse(github_url).path.split("/")
         self.embedder = RepoEmbedder(
             github_url=github_url,

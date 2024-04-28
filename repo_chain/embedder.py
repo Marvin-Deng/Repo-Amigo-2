@@ -28,10 +28,8 @@ class RepoEmbedder:
             return
         try:
             if self.token:
-                parts = re.split(r"(github\.com)", self.github_url)
-                formatted_url = f"{parts[0]}{self.token}@{parts[1]}{parts[2]}.git"
-
-                print(f"formatted_url: {formatted_url}")
+                componenets = re.split(r"(github\.com)", self.github_url)
+                formatted_url = f"{componenets[0]}{self.token}@{componenets[1]}{componenets[2]}.git"
             else:
                 formatted_url = self.github_url
             Repo.clone_from(formatted_url, self.repo_path)
@@ -52,7 +50,6 @@ class RepoEmbedder:
                     )
                 except Exception:
                     pass
-                    # print(f"Failed to load file: {file_name} with error {e}")
         shutil.rmtree("./repo")
         return doc_chunks
 
