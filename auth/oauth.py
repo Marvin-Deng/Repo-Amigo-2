@@ -26,19 +26,22 @@ def oauth_button() -> None:
         res = oauth2.authorize_button(
             name="Login with GitHub",
             redirect_uri=BASE_URI,
+            icon="https://icons.iconarchive.com/icons/simpleicons-team/simple/72/github-icon.png",
             scope="repo",
         )
         if res and "token" in res and "access_token" in res["token"]:
-            st.session_state["token"] = res["token"]["access_token"]
-            st.experimental_rerun()
+            token = res["token"]["access_token"]
+            st.session_state["token"] = token
+            __fetch_and_store_username(token)
+            st.rerun()
     else:
         st.write("You are logged in!")
         if st.button("Logout"):
             del st.session_state["token"]
-            st.experimental_rerun()
+            st.rerun()
 
 
-def fetch_and_store_username(access_token: str) -> None:
+def __fetch_and_store_username(access_token: str) -> None:
     """
     Fetches the GitHub user's username using the provided OAuth access token and stores it in the session state.
     """
@@ -70,4 +73,4 @@ def get_user_repos(username: str) -> list:
         "Accept": "application/vnd.github.v3+json",
     }
     response = requests.get(api_url, headers=headers)
-    return [repo["name"] for repo in response.json().get("items", [])]
+    return [(repo["name"], repo["html_url"]) for repo in response.json().get("items", [])]
