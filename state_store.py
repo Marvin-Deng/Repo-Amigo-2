@@ -28,3 +28,5 @@ def set_state(key, value):
 
 def get_state(key):
     return st.session_state[key]
+
+init_states()
