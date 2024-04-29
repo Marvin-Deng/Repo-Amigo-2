@@ -15,7 +15,7 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 class RepoEmbedder:
     def __init__(
-        self, github_url: str, repo_owner: str, repo_name: str, github_token=None
+        self, repo_owner: str, repo_name: str, github_url: str, github_token=None
     ):
         self.github_url = github_url
         self.repo_name = repo_name
@@ -29,7 +29,9 @@ class RepoEmbedder:
         try:
             if self.token:
                 componenets = re.split(r"(github\.com)", self.github_url)
-                formatted_url = f"{componenets[0]}{self.token}@{componenets[1]}{componenets[2]}.git"
+                formatted_url = (
+                    f"{componenets[0]}{self.token}@{componenets[1]}{componenets[2]}.git"
+                )
             else:
                 formatted_url = self.github_url
             Repo.clone_from(formatted_url, self.repo_path)

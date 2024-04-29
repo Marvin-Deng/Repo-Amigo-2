@@ -53,7 +53,7 @@ class RepoChain:
         )
 
     def get_response(
-        self, repo_name: str, repo_owner: str, github_url: str, user_question: str
+        self, repo_owner: str, repo_name: str, github_url: str, user_question: str
     ) -> str:
         db = self.load_faiss_index()
         if db is None:

@@ -7,8 +7,10 @@ from repo_chain.embedder import RepoEmbedder
 from repo_chain.chain import RepoChain
 from auth.oauth import oauth_button, get_user_repos
 from state_store import (
-    State,
-    init_states,
+    RepoState,
+    AuthState,
+    is_default_state,
+    init_repo_states,
     set_state,
     get_state,
 )
@@ -17,9 +19,9 @@ from state_store import (
 def set_url_states(github_url: str) -> None:
     if github_url:
         url_components = urlparse(github_url).path.split("/")
-        set_state(State.CURR_REPO_URL, github_url)
-        set_state(State.CURR_REPO_NAME, url_components[2])
-        set_state(State.CURR_REPO_OWNER, url_components[1])
+        set_state(RepoState.CURR_REPO_URL, github_url)
+        set_state(RepoState.CURR_REPO_NAME, url_components[2])
+        set_state(RepoState.CURR_REPO_OWNER, url_components[1])
 
 
 def main():
@@ -31,8 +33,8 @@ def main():
     oauth_button()
 
     # REPOSITORY DROPDOWN
-    if "token" in st.session_state and st.session_state["token"]:
-        token = st.session_state["token"]
+    if not is_default_state(AuthState.ACCESS_TOKEN):
+        token = get_state(AuthState.ACCESS_TOKEN)
         repo_info = get_user_repos("Marvin-Deng")
         if repo_info:
             repo_options = [("", None)] + [(name, url) for name, url in repo_info]
@@ -60,25 +62,26 @@ def main():
             st.write("No repositories found or unable to retrieve repositories.")
 
     # GITHUB URL INPUT
-    if not get_state(State.CURR_REPO_URL):
+    if not get_state(RepoState.CURR_REPO_URL):
         st.write("OR")
         github_url = st.text_input(
             "Enter a public github url or a private repo if logged in"
         )
         set_url_states(github_url)
         if st.button("Clear Repository URL"):
-            index_path = f"./store/{get_state(State.CURR_REPO_OWNER)}-{get_state(State.CURR_REPO_NAME)}"
+            index_path = f"./store/{get_state(RepoState.CURR_REPO_OWNER)}-{get_state(RepoState.CURR_REPO_NAME)}"
             if os.path.exists(index_path):
                 shutil.rmtree(index_path)
-            init_states()
+            init_repo_states()
 
     # GEMINI RESPONSE
     else:
         with st.spinner("Loading"):
+            token = get_state(AuthState.ACCESS_TOKEN)
             embedder = RepoEmbedder(
-                github_url=get_state(State.CURR_REPO_URL),
-                repo_owner=get_state(State.CURR_REPO_OWNER),
-                repo_name=get_state(State.CURR_REPO_NAME),
+                repo_owner=get_state(RepoState.CURR_REPO_OWNER),
+                repo_name=get_state(RepoState.CURR_REPO_NAME),
+                github_url=get_state(RepoState.CURR_REPO_URL),
                 github_token=token,
             )
             embedder.clone_repo()
@@ -94,9 +97,9 @@ def main():
             with st.spinner("Answering question..."):
                 st.write(
                     repo_chain.get_response(
-                        repo_name=get_state(State.CURR_REPO_NAME),
-                        repo_owner=get_state(State.CURR_REPO_OWNER),
-                        github_url=get_state(State.CURR_REPO_URL),
+                        repo_owner=get_state(RepoState.CURR_REPO_OWNER),
+                        repo_name=get_state(RepoState.CURR_REPO_NAME),
+                        github_url=get_state(RepoState.CURR_REPO_URL),
                         user_question=question,
                     )
                 )

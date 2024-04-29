@@ -4,29 +4,55 @@ import copy
 import streamlit as st
 
 
-class State(Enum):
+class AuthState(Enum):
+    USERNAME = "username"
+    ACCESS_TOKEN = "access_token"
+
+
+class RepoState(Enum):
     CURR_REPO_URL = "repo_url"
     CURR_REPO_NAME = "repo_name"
     CURR_REPO_OWNER = "repo_owner"
 
 
-STATE_DEFAULTS = {
-    State.CURR_REPO_URL: "",
-    State.CURR_REPO_NAME: "",
-    State.CURR_REPO_OWNER: "",
+AUTH_DEFUALTS = {
+    AuthState.USERNAME: "",
+    AuthState.ACCESS_TOKEN: "",
+}
+
+REPO_DEFAULTS = {
+    RepoState.CURR_REPO_URL: "",
+    RepoState.CURR_REPO_NAME: "",
+    RepoState.CURR_REPO_OWNER: "",
 }
 
 
-def init_states():
-    for key, default in STATE_DEFAULTS.items():
+def is_default_state(key: str) -> bool:
+    if key not in st.session_state:
+        return True
+    val = st.session_state[key]
+    return val == AUTH_DEFUALTS.get(key, None) or val == REPO_DEFAULTS.get(key, None)
+
+
+def init_auth_states() -> None:
+    for key, default in AUTH_DEFUALTS.items():
         set_state(key, copy.deepcopy(default))
 
 
-def set_state(key, value):
+def init_repo_states() -> None:
+    for key, default in REPO_DEFAULTS.items():
+        set_state(key, copy.deepcopy(default))
+
+
+def set_state(key: str, value) -> None:
     st.session_state[key] = value
 
 
-def get_state(key):
+def get_state(key: str):
+    if key not in st.session_state:
+        return None
     return st.session_state[key]
 
-init_states()
+
+init_auth_states()
+init_repo_states()
