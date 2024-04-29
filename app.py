@@ -49,12 +49,11 @@ def main():
                 unsafe_allow_html=True,
             )
             selected_repo = st.selectbox(
-                "Select a repository:",
+                "Select a repository form the dropdown:",
                 options=repo_options,
                 format_func=lambda x: x[0] if x != "None" else "None",
             )
             if selected_repo[1] != None:
-                st.write(f"Selected repository: {selected_repo[0]}")
                 if st.button("Select Repository"):
                     github_url = selected_repo[1]
                     set_url_states(github_url)
@@ -62,20 +61,21 @@ def main():
             st.write("No repositories found or unable to retrieve repositories.")
 
     # GITHUB URL INPUT
-    if not get_state(RepoState.CURR_REPO_URL):
-        st.write("OR")
-        github_url = st.text_input(
-            "Enter a public github url or a private repo if logged in"
-        )
+    github_url = st.text_input(
+        "Enter a public github url or a private repo if logged in"
+    )
+    if github_url:
         set_url_states(github_url)
-        if st.button("Clear Repository URL"):
-            index_path = f"./store/{get_state(RepoState.CURR_REPO_OWNER)}-{get_state(RepoState.CURR_REPO_NAME)}"
-            if os.path.exists(index_path):
-                shutil.rmtree(index_path)
-            init_repo_states()
+
+    st.write(f"Selected repository: {get_state(RepoState.CURR_REPO_NAME)}")
+    if st.button("Clear Repository"):
+        index_path = f"./store/{get_state(RepoState.CURR_REPO_OWNER)}-{get_state(RepoState.CURR_REPO_NAME)}"
+        if os.path.exists(index_path):
+            shutil.rmtree(index_path)
+        init_repo_states()
 
     # GEMINI RESPONSE
-    else:
+    if get_state(RepoState.CURR_REPO_URL):
         with st.spinner("Loading"):
             token = get_state(AuthState.ACCESS_TOKEN)
             embedder = RepoEmbedder(

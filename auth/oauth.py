@@ -16,6 +16,7 @@ from state_store import (
     AuthState,
     is_default_state,
     init_auth_states,
+    init_repo_states,
     set_state,
     get_state,
 )
@@ -46,6 +47,7 @@ def oauth_button() -> None:
         st.write("You are logged in!")
         if st.button("Logout"):
             init_auth_states()
+            init_repo_states()
             st.rerun()
 
 
