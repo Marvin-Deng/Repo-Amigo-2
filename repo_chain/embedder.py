@@ -26,17 +26,15 @@ class RepoEmbedder:
     def clone_repo(self):
         if os.path.exists(self.repo_path) or os.path.exists(self.index_path):
             return
-        try:
-            if self.token:
-                componenets = re.split(r"(github\.com)", self.github_url)
-                formatted_url = (
-                    f"{componenets[0]}{self.token}@{componenets[1]}{componenets[2]}.git"
-                )
-            else:
-                formatted_url = self.github_url
-            Repo.clone_from(formatted_url, self.repo_path)
-        except Exception:
-            st.write("Error cloning repo")
+        if self.token:
+            componenets = re.split(r"(github\.com)", self.github_url)
+            formatted_url = (
+                f"{componenets[0]}{self.token}@{componenets[1]}{componenets[2]}.git"
+            )
+        else:
+            formatted_url = self.github_url
+        Repo.clone_from(formatted_url, self.repo_path)
+        
 
     def recursively_parse_repo_files(self) -> list:
         doc_chunks = []

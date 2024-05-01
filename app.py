@@ -16,7 +16,7 @@ from state_store import (
 )
 
 
-def set_url_states(github_url: str) -> None:
+def set_repo_states(github_url: str) -> None:
     if github_url:
         url_components = urlparse(github_url).path.split("/")
         set_state(RepoState.CURR_REPO_URL, github_url)
@@ -56,7 +56,7 @@ def main():
             if selected_repo[1] != None:
                 if st.button("Select Repository"):
                     github_url = selected_repo[1]
-                    set_url_states(github_url)
+                    set_repo_states(github_url)
         else:
             st.write("No repositories found or unable to retrieve repositories.")
 
@@ -65,9 +65,12 @@ def main():
         "Enter a public github url or a private repo if logged in"
     )
     if github_url:
-        set_url_states(github_url)
+        set_repo_states(github_url)
 
+    # SELECTED REPO TEXT
     st.write(f"Selected repository: {get_state(RepoState.CURR_REPO_NAME)}")
+
+    # CLEAR REPO STATE BUTTON
     if st.button("Clear Repository"):
         index_path = f"./store/{get_state(RepoState.CURR_REPO_OWNER)}-{get_state(RepoState.CURR_REPO_NAME)}"
         if os.path.exists(index_path):
@@ -84,25 +87,32 @@ def main():
                 github_url=get_state(RepoState.CURR_REPO_URL),
                 github_token=token,
             )
-            embedder.clone_repo()
-            embedder.generate_vector_store()
+            try:
+                embedder.clone_repo()
+                embedder.generate_vector_store()
 
-            repo_chain = RepoChain(embedder.index_path)
-            repo_chain.generate_conversational_chain()
+                repo_chain = RepoChain(embedder.index_path)
+                repo_chain.generate_conversational_chain()
 
-            st.success(f"{embedder.repo_name} has been loaded!")
+                st.success(f"{embedder.repo_name} has been loaded!")
 
-        question = st.text_input("Ask a question about this repo!", key="question")
-        if question:
-            with st.spinner("Answering question..."):
-                st.write(
-                    repo_chain.get_response(
-                        repo_owner=get_state(RepoState.CURR_REPO_OWNER),
-                        repo_name=get_state(RepoState.CURR_REPO_NAME),
-                        github_url=get_state(RepoState.CURR_REPO_URL),
-                        user_question=question,
+            except:
+                init_repo_states()
+                st.error("Error cloning repo. Please enter a valid github url.")
+
+        # QUESTION INPUT
+        if get_state(RepoState.CURR_REPO_URL):
+            question = st.text_input("Ask a question about this repo!", key="question")
+            if question:
+                with st.spinner("Answering question..."):
+                    st.write(
+                        repo_chain.get_response(
+                            repo_owner=get_state(RepoState.CURR_REPO_OWNER),
+                            repo_name=get_state(RepoState.CURR_REPO_NAME),
+                            github_url=get_state(RepoState.CURR_REPO_URL),
+                            user_question=question,
+                        )
                     )
-                )
 
 
 if __name__ == "__main__":
