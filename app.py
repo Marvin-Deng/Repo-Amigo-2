@@ -5,6 +5,7 @@ import streamlit as st
 from repo_chain.embedder import RepoEmbedder
 from repo_chain.chain import RepoChain
 from auth.oauth import oauth_button, get_user_repos
+from utils.utils import is_valid_github_url
 from state.state_store import (
     RepoState,
     AuthState,
@@ -57,8 +58,10 @@ def main():
     github_url = st.text_input(
         "Enter a public github url or a private repo if logged in"
     )
-    if github_url:
+    if is_valid_github_url(github_url):
         set_repo_states(github_url)
+    else:
+        st.error("Please enter a valid github url.")
 
     # SELECTED REPO TEXT
     st.write(f"Selected repository: {get_state(RepoState.CURR_REPO_NAME)}")
