@@ -1,7 +1,7 @@
 import streamlit as st
 from enum import Enum
 import copy
-import streamlit as st
+from urllib.parse import urlparse
 
 
 class AuthState(Enum):
@@ -42,6 +42,14 @@ def init_auth_states() -> None:
 def init_repo_states() -> None:
     for key, default in REPO_DEFAULTS.items():
         set_state(key, copy.deepcopy(default))
+
+
+def set_repo_states(github_url: str) -> None:
+    if github_url:
+        url_components = urlparse(github_url).path.split("/")
+        set_state(RepoState.CURR_REPO_URL, github_url)
+        set_state(RepoState.CURR_REPO_NAME, url_components[2])
+        set_state(RepoState.CURR_REPO_OWNER, url_components[1])
 
 
 def set_state(key: str, value) -> None:

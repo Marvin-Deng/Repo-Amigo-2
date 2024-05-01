@@ -1,7 +1,6 @@
 import os
 import shutil
 import streamlit as st
-from urllib.parse import urlparse
 
 from repo_chain.embedder import RepoEmbedder
 from repo_chain.chain import RepoChain
@@ -11,17 +10,9 @@ from state_store import (
     AuthState,
     is_default_state,
     init_repo_states,
-    set_state,
+    set_repo_states,
     get_state,
 )
-
-
-def set_repo_states(github_url: str) -> None:
-    if github_url:
-        url_components = urlparse(github_url).path.split("/")
-        set_state(RepoState.CURR_REPO_URL, github_url)
-        set_state(RepoState.CURR_REPO_NAME, url_components[2])
-        set_state(RepoState.CURR_REPO_OWNER, url_components[1])
 
 
 def main():

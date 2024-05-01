@@ -1,7 +1,6 @@
 import os
 import re
 import shutil
-import streamlit as st
 from git import Repo
 import google.generativeai as genai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
