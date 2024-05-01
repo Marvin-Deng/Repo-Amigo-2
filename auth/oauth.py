@@ -2,7 +2,7 @@ import requests
 import streamlit as st
 from streamlit_oauth import OAuth2Component
 
-from constants import (
+from state.constants import (
     BASE_URI,
     CLIENT_ID,
     CLIENT_SECRET,
@@ -12,7 +12,7 @@ from constants import (
     GITHUB_REPOS_URL,
     GITHUB_ICON,
 )
-from state_store import (
+from state.state_store import (
     AuthState,
     is_default_state,
     init_auth_states,

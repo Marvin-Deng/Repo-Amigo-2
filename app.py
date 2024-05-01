@@ -5,7 +5,7 @@ import streamlit as st
 from repo_chain.embedder import RepoEmbedder
 from repo_chain.chain import RepoChain
 from auth.oauth import oauth_button, get_user_repos
-from state_store import (
+from state.state_store import (
     RepoState,
     AuthState,
     is_default_state,
@@ -44,6 +44,8 @@ def main():
                 options=repo_options,
                 format_func=lambda x: x[0] if x != "None" else "None",
             )
+
+            # SELECT REPO BUTTON
             if selected_repo[1] != None:
                 if st.button("Select Repository"):
                     github_url = selected_repo[1]
