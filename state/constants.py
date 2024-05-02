@@ -5,12 +5,12 @@ DEV_MODE = st.secrets["DEV_MODE"] == "True"
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 BASE_URI = "http://localhost:8501" if DEV_MODE else "https://repo-amigo-2.streamlit.app"
 CLIENT_ID = (
-    st.secrets["GITHUB_OAUTH_CLIENT_ID_DEV"]
+    st.secrets["GITHUB_CLIENT_ID_DEV"]
     if DEV_MODE
     else st.secrets["GITHUB_CLIENT_ID"]
 )
 CLIENT_SECRET = (
-    st.secrets["GITHUB_OAUTH_CLIENT_SECRET_DEV"]
+    st.secrets["GITHUB_CLIENT_SECRET_DEV"]
     if DEV_MODE
     else st.secrets["GITHUB_CLIENT_SECRET"]
 )
