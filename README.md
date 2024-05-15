@@ -1,4 +1,9 @@
 # Repo Amigo 2
+A chatbot for interacting with any Github Repo.
+
+![image](https://github.com/Marvin-Deng/Repo-Amigo-2/assets/52214624/30bff736-14da-480c-afe5-d76c53e9f8d0)
+
+![image](https://github.com/Marvin-Deng/Repo-Amigo-2/assets/52214624/9f8da6b9-fb8f-4ef0-bb20-b97487b07efe)
 
 ## Setup
 
