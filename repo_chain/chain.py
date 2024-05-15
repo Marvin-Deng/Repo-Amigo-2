@@ -26,7 +26,7 @@ class RepoChain:
 
     def generate_conversational_chain(self) -> None:
         prompt_template = """ 
-                Repo: {repo_name} {repo_owner} ({github_url}) | Question: {question} | Context: {input_documents} \n 
+                Repo: {repo_name} | Owner: {repo_owner} | Github URL: {github_url} | Question: {question} | Context: {input_documents} \n 
                 Instructions: 
                 - Focus on relevant code.
                 - Purpose/features - describe. 
